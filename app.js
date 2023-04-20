@@ -1,8 +1,30 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const jwt = require("jsonwebtoken");
 const app = express();
 
 app.use(cookieParser());
+
+const payloadData = {
+  myPayloadData: 1234,
+};
+// 첫번째로 어떤 데이터를 넣어서 만들껀지
+// 두번째로 어떤 비밀 키를 사용해서 만들껀지
+const token = jwt.sign(payloadData, "mysecretKey");
+console.log(token);
+
+const decodedValue = jwt.decode(token);
+console.log("복호화한 value 입니다.", decodedValue);
+
+// jwt 를 만들었을 때, 사용한 비밀키가 일치하는가 확인하는 방법
+const decodedValueByVerify = jwt.verify(token, "mysecretKey");
+console.log(decodedValueByVerify);
+
+const decodedValueByVerifyToError = jwt.verify(
+  token,
+  "비밀키를 다르게 입력하면"
+);
+console.log(decodedValueByVerifyToError); // JsonWebTokenError: invalid signature 에러가 발생한다
 
 app.get("/set-cookie", (req, res) => {
   let expire = new Date();
